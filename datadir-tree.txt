@@ -1,0 +1,12 @@
+E:\eclipse\work_pllace\my_docy\data\2PuertoRico-History.txt
+E:\eclipse\work_pllace\my_docy\data\3PuertoRico-WhatToDo.txt
+E:\eclipse\work_pllace\my_docy\data\4PuertoRico-WhereToGo.txt
+E:\eclipse\work_pllace\my_docy\data\5Vallarta-History.txt
+E:\eclipse\work_pllace\my_docy\data\6Vallarta-WhatToDo.txt
+E:\eclipse\work_pllace\my_docy\data\7Vallarta-WhereToGo.txt
+E:\eclipse\work_pllace\my_docy\data\water_fees.txt
+E:\eclipse\work_pllace\my_docy\data\Weak_economy.txt
+E:\eclipse\work_pllace\my_docy\data\Wilmington_lawyer.txt
+E:\eclipse\work_pllace\my_docy\data\Wingates_winds.txt
+E:\eclipse\work_pllace\my_docy\data\Workers_aid_center.txt
+E:\eclipse\work_pllace\my_docy\data\Working_for_Free.txt
