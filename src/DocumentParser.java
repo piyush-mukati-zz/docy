@@ -18,12 +18,7 @@ public class DocumentParser {
     private List <String> allTerms = new ArrayList<String>(); //to hold all terms
     private List <double[]> tfidfDocsVector = new ArrayList<double[]>();
 
-    /**
-     * Method to read files and store in array.
-     * @param filePath : source file path
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
+    
       public void parseFiles(String filePath) throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
         BufferedReader in = null;
@@ -74,14 +69,15 @@ public class DocumentParser {
         double tf; //term frequency
         double idf; //inverse document frequency
         double tfidf; //term requency inverse document frequency        
+        TfIdf object_tfidf=new TfIdf();
         
         for (String[] doc : termsDocsArray) {
             double[] tfidfvectors = new double[allTerms.size()];
             int count = 0;
             for (String term : allTerms) {
-                tf = new TfIdf().tfCalculator(doc, term);
-                idf = new TfIdf().idfCalculator(termsDocsArray, term);
-                tfidf = tf * idf;
+                tf = object_tfidf.tfCalculator(doc, term);
+                idf = object_tfidf.idfCalculator(termsDocsArray, term);
+                tfidf = tf * idf*10000;
                 tfidfvectors[count] = tfidf;
                 count++;
             }

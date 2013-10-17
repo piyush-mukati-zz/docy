@@ -5,7 +5,34 @@
 //
 //
 public class CMean {
+	private int c;					//no of centers
+	private int m;
+	private double e;
 	
+	private  double  [][] pop=null;	//population
+	
+	public double[][] centers =null;		//centers of clusters
+	public double [][] U=null;       //membership
+	
+	
+	public  CMean( double pop[][] , int c,double e,int m ){
+		this.m=m;
+		this.e=e;
+		this.c=c;
+		this.pop=pop;
+		this.centers=new double [c][ (pop[0].length)  ]; //center [class][fetures]
+		this.U=new double [pop.length][c];    //u membership  [document]*[class]
+	
+
+		//init to u with random
+		for(int i=0;i<U.length;i++){
+			for(int j=0;j<U[i].length;j++ ){
+			U[i][j]=Math.random();	
+			}
+			}
+		normaliseOnRow(U);
+	
+	}	
 	
 	public static void db(double [][] a){
 		for(int i=0;i<a.length;i++){
@@ -14,6 +41,17 @@ public class CMean {
 	}System.out.println("");
 			}
 	
+	}
+	
+	private double obj_func( ){
+		double ans=0;
+	for(int i=0;i<this.centers.length;i++){
+		for(int j=0;j<this.pop.length;j++){
+			ans+=( Math.pow(this.U[j][i],this.m)*diff(this.pop[j],this.centers[i]) );
+			}
+		}
+		//System.out.println(ans);
+		return ans;
 	}
 	
 	public double cosSim(double[] docVector1, double[] docVector2) {
@@ -48,7 +86,7 @@ public class CMean {
 		return ans;
 	}
 	
-	public void normaliseOnRow(double [][] U){
+	private void normaliseOnRow(double [][] U){
 		for(int i=0;i<U.length;i++){
 			double sum=0;
 			for(int j=0;j<U[i].length;j++ ){
@@ -62,50 +100,42 @@ public class CMean {
 	}
 	
 
-	double find_delta(double[][] U,double[][] Unew){
+	private double find_delta(double[][] Unew){
 		double delta=0.0;
+		
 		for(int i=0;i<U.length;i++){
 			for(int j=0;j<U[i].length;j++){
-				delta+=Math.abs(U[i][j]-Unew[i][j]);
+				delta=Math.max(Math.abs(U[i][j]-Unew[i][j]),delta);
 		
 			}
 			
 		}
-		
+		/*
+		delta=Math.abs(obj_func( )-obj_func( x ,c, Unew , 2));
+			*/
 		return delta;
 		
 	}
 	
-	public CMean(){
-	}
 	
-	public  double[][] cluster(  double pop[][] , int c,double e,int m){
+	public  double[][] cluster( ){
 		
 		System.out.println("initializing....");
 		 
-		double center [][]=new double [c][ (pop[0].length)  ]; //center [class][fetures]
-		double U [][]=new double [pop.length][c];    //u membership  [document]*[class]
-		double Unew [][]=new double [pop.length][c];    //u membership of i+i step [document]*[class]
+		double Unew [][]=new double [pop.length][c];    //u membership of i+1 step [document]*[class]
 		
-		//init to u with random
-		for(int i=0;i<U.length;i++){
-			for(int j=0;j<U[i].length;j++ ){
-			U[i][j]=Math.random();	
-			}
-			}
-		normaliseOnRow(U);
-	
 		int itr=0;
 		
 		int Max_itr=50;
 		double delta=0.0;
 		
-		// rhresohold ki condition bich mai hai..
+		// thresohold ki condition bich mai hai..
 		//@ main loop
 		while(itr<Max_itr ){
 		itr++;
-		System.out.println("itration = "+itr+"\nfirst part...");
-	
+		System.out.println("itration = "+itr+"objective function = "+obj_func());
+		System.out.println("finding centers ....");
+		
 		
 		// calculation of center first formulae
 		for(int i=0;i<c;i++){
@@ -118,8 +148,6 @@ public class CMean {
 				//calculation of numerator
 			 double   [] x= new double [pop[0].length]; // dont write in x read only
 			for(int xxx=0; xxx<x.length; xxx++)x[xxx]=0.0;
-		
-			
 			for(int j=0;j<pop.length;j++){
 				
 				double uKiPower=Math.pow(U[j][i],m);
@@ -131,12 +159,10 @@ public class CMean {
 			}
 			
 			//devide
-			for(int k=0;k<x.length;k++){center[i][k]= x[k]/deno ;}
-			
+			for(int k=0;k<x.length;k++){centers[i][k]= x[k]/deno ;}	
 		}
-	
-		//end of first formulae
-		System.out.println("second part...");
+		
+		System.out.println("calculating membership...");
 		
 		for(int i=0;i<pop.length;i++){ //for each document
 			
@@ -150,66 +176,60 @@ public class CMean {
 				for(int k=0;k<c;k++){ //for each class
 					double dd=0.0;
 					
-					dd=diff(x,center[j]) /diff(x,center[k]);
-					
-					tmp+=(Math.pow(dd ,2.0/(double)(m-1)));
-					
+					dd=diff(x,centers[j]) /diff(x,centers[k]);
+					tmp+=(Math.pow(dd ,2.0/(double)(m-1)));		
 				}
 //doc,class
 			Unew[i][j]=1.0/tmp;
 			}
-
 		}
 		//end of second formulae............................
-		
-		//coping
-		
-		delta=find_delta(U,Unew);
-		
+		delta=find_delta( Unew);
+		//coping	
 for(int i=0;i<pop.length;i++){ //for each document
 			for(int j=0;j<c;j++){ //for each class
 	U[i][j]=Unew[i][j];
 	}
 	}
-		
-		///.......debug///....
+///.......debug///......................................................
+		int debug=0;
+		if(debug==1){
 		//db(pop);
 		System.out.println("...................................");
-		db(center);
-
+		db(centers);
 		System.out.println("UUUUUU");
-		
 		db(U);
-
 		System.out.println("...................................");
-		
 		//db(Unew);
-
 //		System.out.println("...................................");
-			
-
+		}
 if( e>delta )		
 break;
-		}
-	
-			
-		return center;
+}
+System.out.println("membership values...");
+		db(U);
+		
+		return centers;
 	}
 	
-	public static void main(String[] args) {
-		CMean cm=new CMean();
+	/*/.............................................................................................
 	
+	public static void main(String[] args) {
 		
 		double pop [][]={
 	
-				{ 8147 ,   975},
-					{ 9058  ,  0},
-		    {1270  ,  5469},
-		    {9134   , 9575},
-		    {6324   , 9649}
+				{ 0.8147 ,   0.0975},
+					
+		    {0.1270  ,  0.5469},
+		    {.9134   , .9575},
+		    {.6324   , .9649}
 		    };
 		
-		cm.cluster(pop, 3,0.01,3);
-	}
 
+		CMean cm=new CMean(pop, 3,0.01,3);
+	
+		cm.cluster();
+	}
+*/
+	
 }

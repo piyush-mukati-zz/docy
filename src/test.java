@@ -6,19 +6,20 @@ import java.util.*;
 public class test {
    public static void main(String args[]) throws FileNotFoundException, IOException {
 		
-	   
+	   String path="data";
 	   DocumentParser dp=new DocumentParser() ;
 	  System.out.println("preprocessing ...");
-	   dp.parseFiles("E:\\eclipse\\work_pllace\\my_docy\\data");
+	   dp.parseFiles(path);
 	   
 	   System.out.println("tfidf calculation ...");
 		   dp.tfIdfCalculator();
 
 		   System.out.println("Cmean running ...");
-			  
-   CMean cm=new CMean();
-   double mat[][]=dp.get_tfidf();
-  cm.cluster(mat , 2, .4,2);
+			   double mat[][]=dp.get_tfidf();
+			   CMean.db(mat);
+
+CMean cm=new CMean(mat , 2, 0.01,2);
+   cm.cluster();
    
    }
 }
