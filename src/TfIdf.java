@@ -7,22 +7,30 @@ import java.util.Map;
 public class TfIdf {
 	
 	private Map<String,Double> idf_map;
+	private Map<String,Double> tf_map;
 	
 	public TfIdf(){
 		idf_map=new HashMap<String,Double>();
-	}
+		tf_map=new HashMap<String,Double>();
+		}
 	
     public double tfCalculator(String[] totalterms, String termToCheck) {
-        double count = 0;  //to count the overall occurrence of the term termToCheck
+    	if(idf_map.containsKey(termToCheck)){
+        		return (double)tf_map.get(termToCheck); 	
+        	        }
+        
+    	double count = 0;  //to count the overall occurrence of the term termToCheck
         for (String s : totalterms) {
             if (s.equalsIgnoreCase(termToCheck)) {
                 count++;
             }
         }
-//        System.out.println("tf_coutn="+count);
-        
-        return count / totalterms.length;
-    }
+
+        double ans= count / totalterms.length;
+       idf_map.put(termToCheck, ans);           
+        return ans;
+    } 
+     
     //
     public double idfCalculator(List <String[]>allTerms, String termToCheck) {
     	

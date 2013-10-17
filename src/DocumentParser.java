@@ -69,19 +69,24 @@ public class DocumentParser {
         double tf; //term frequency
         double idf; //inverse document frequency
         double tfidf; //term requency inverse document frequency        
-        TfIdf object_tfidf=new TfIdf();
-        
+        Idf object_idf=new Idf(); 
+        int docno=0;
         for (String[] doc : termsDocsArray) {
-            double[] tfidfvectors = new double[allTerms.size()];
+        System.out.println("running on doc "+ (++docno));	
+        	Tf object_tf=new Tf();// it must be here b coz need to refresh hash for each document
+            
+            
+        	double[] tfidfvectors = new double[allTerms.size()];
             int count = 0;
             for (String term : allTerms) {
-                tf = object_tfidf.tfCalculator(doc, term);
-                idf = object_tfidf.idfCalculator(termsDocsArray, term);
+                tf = object_tf.calculate(doc, term);
+                idf = object_idf.calculate(termsDocsArray, term);
                 tfidf = tf * idf*10000;
                 tfidfvectors[count] = tfidf;
                 count++;
             }
             tfidfDocsVector.add(tfidfvectors);  //storing document vectors;            
+        
         }
     
         /*
