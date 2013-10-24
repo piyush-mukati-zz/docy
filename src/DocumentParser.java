@@ -12,12 +12,16 @@ import java.util.List;
  *
  **/
 public class DocumentParser {
-
-    //This variable will hold all terms of each document in an array.
-    private List <String[]> termsDocsArray = new ArrayList<String[]>();
-    private List <String> allTerms = new ArrayList<String>(); //to hold all terms
-    private List <double[]> tfidfDocsVector = new ArrayList<double[]>();
-
+	//This variable will hold all terms of each document in an array.
+    public List <String[]> termsDocsArray = new ArrayList<String[]>();
+    public List <String> allTerms = new ArrayList<String>(); //to hold all terms
+    public List <double[]> tfidfDocsVector = new ArrayList<double[]>();
+    public int n_dw[][]=null;
+   
+    public   DocumentParser(){
+    	n_dw=null;
+    }
+    
     
       public void parseFiles(String filePath) throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
@@ -25,7 +29,7 @@ public class DocumentParser {
         int cnt=0;
     	
         for (File f : allfiles) {
-            if (f.getName().endsWith(".txt")) {
+            if (f.getName().endsWith(".lem")) {
         		 cnt++; System.out.println("file- "+cnt+ "  "+f.getName());
             
                 in = new BufferedReader(new FileReader(f));
@@ -53,11 +57,39 @@ public class DocumentParser {
   */
  
     }
-
-    /**
+/*
+ * 
+ */
+      public void Calculate_n_dw(){
+    	  int nd=termsDocsArray.size();
+    	  int nw=allTerms.size();
+    	 
+    	  System.out.println("total doc ="+nd+"  total word="+nw);
+    	  n_dw=new int[nd][nw];
+    	  
+    	  int docno=0;
+    	  for (String[] doc : termsDocsArray) {
+          System.out.println("dw running on doc "+ (docno));	
+          	  
+              int wrdno=0;
+          	  for (String term : allTerms) {
+          		
+          		  int count = 0;
+          		for(int i=0;i<doc.length;i++){
+          				if(doc[i].equals(term))count++;
+          				}
+          	
+          		n_dw[docno][wrdno]=count;
+          	  wrdno++;
+          	  count=0;
+          	  }
+          	 docno++;
+          	 }
+      }
+      /**
      * Method to create termVector according to its tfidf score.
      */
-    public void tfIdfCalculator() {
+      public void tfIdfCalculator() {
     	/*
     	// * read testing 
     	 for(String [] ss :termsDocsArray)
@@ -72,7 +104,7 @@ public class DocumentParser {
         Idf object_idf=new Idf(); 
         int docno=0;
         for (String[] doc : termsDocsArray) {
-        System.out.println("running on doc "+ (++docno));	
+        System.out.println("TfIdf running on doc "+ (++docno));	
         	Tf object_tf=new Tf();// it must be here b coz need to refresh hash for each document
             
             
@@ -101,17 +133,32 @@ public class DocumentParser {
 
     }
    
-public double [][] get_tfidf(){
-double [][]ans =new double[this.tfidfDocsVector.size()][];
+    public double [][] get_tfidf(){
+    	double [][]ans =new double[this.tfidfDocsVector.size()][];
 
-for(int i=0,n=this.tfidfDocsVector.size();i<n;i++){
-	
-	ans[i]=this.tfidfDocsVector.get(i);
-}
-this.tfidfDocsVector.toArray(ans);
+    	for(int i=0,n=this.tfidfDocsVector.size();i<n;i++){
+    		
+    		ans[i]=this.tfidfDocsVector.get(i);
+    	}
+    	this.tfidfDocsVector.toArray(ans);
 
-return ans;
-}
+    	return ans;
+    	}
+
+    
+    public int [][] get_n_dw(){
+    if(false && this.n_dw!=null){
+    System.out.println("calculating n_dW");
+    	Calculate_n_dw();
+    	 
+    }	
+    System.out.println("calculating n_dW");
+    
+    Calculate_n_dw();
+    return this.n_dw;
+    }
+    
+    
     public static void main(String [] args) throws FileNotFoundException, IOException{
     	
     	
